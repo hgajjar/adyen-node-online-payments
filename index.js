@@ -7,6 +7,7 @@ const { uuid } = require("uuidv4");
 const { hmacValidator } = require('@adyen/api-library');
 const { Client, Config, CheckoutAPI } = require("@adyen/api-library");
 
+
 // init app
 const app = express();
 // setup request logging
@@ -114,6 +115,7 @@ app.get("/", (req, res) => res.render("index"));
 app.get("/preview", (req, res) =>
   res.render("preview", {
     type: req.query.type,
+    method: req.query.method,
   })
 );
 
@@ -121,6 +123,7 @@ app.get("/preview", (req, res) =>
 app.get("/checkout", (req, res) =>
   res.render("checkout", {
     type: req.query.type,
+    method: req.query.method,
     clientKey: process.env.ADYEN_CLIENT_KEY
   })
 );
@@ -129,8 +132,57 @@ app.get("/checkout", (req, res) =>
 app.get("/result/:type", (req, res) =>
   res.render("result", {
     type: req.params.type,
+    method: req.query.method,
   })
 );
+
+// Invoke /paymentMethods endpoint
+app.post("/api/paymentMethods", async (req, res) => {
+
+  try {
+    // Ideally the data passed here should be computed based on business logic
+    const response = await checkout.paymentMethods({
+      amount: { currency: "EUR", value: 1000 }, // value is 10€ in minor units
+      countryCode: "NL",
+      merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT, // required
+      channel: "Web",
+      shopperLocale: "nl-NL"
+    });
+
+    res.json(response);
+  } catch (err) {
+    console.error(`Error: ${err.message}, error code: ${err.errorCode}`);
+    res.status(err.statusCode).json(err.message);
+  }
+});
+
+// Invoke /paymentMethods endpoint
+app.post("/api/payments", async (req, res) => {
+  try {
+    const orderRef = uuid();
+    // Ideally the data passed here should be computed based on business logic
+    const response = await checkout.payments({
+      amount: { currency: "EUR", value: 1000 }, // value is 10€ in minor units
+      merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT, // required
+      paymentMethod: req.body.state_data.paymentMethod,
+      reference: orderRef,
+      channel: "Web",
+      browserInfo: req.body.state_data.browserInfo,
+      riskData: req.body.state_data.riskData,
+      additionalData: {
+        allow3DS2: true
+      },
+      shopperEmail: "hardik.gajjar@inviqa.com",
+      shopperIP: "42.105.161.2",
+      returnUrl: `http://localhost:${getPort()}/api/handleShopperRedirect?orderRef=${orderRef}` // set redirect URL required for some payment methods
+    });
+
+    res.json(response);
+  } catch (err) {
+    console.error(`Error: ${err.message}, error code: ${err.errorCode}`);
+    res.status(err.statusCode).json(err.message);
+  }
+});
 
 /* ################# end CLIENT SIDE ENDPOINTS ###################### */
 

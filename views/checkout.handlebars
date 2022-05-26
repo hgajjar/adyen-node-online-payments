@@ -1,6 +1,7 @@
 {{!-- Hidden divs with data passed from the Express server --}}
 <div id="clientKey" class="hidden">{{ clientKey }}</div>
 <div id="type" class="hidden">{{ type }}</div>
+<div id="method" class="hidden">{{ method }}</div>
 
 <div id="payment-page">
   <div class="container">
@@ -8,9 +9,14 @@
     {{!--  Drop-in includes styling out-of-the-box, so no additional styling is needed. --}}
     <div class="payment-container">
       <div id={{type}} class="payment"></div>
+
+      <div id="googlepay-container"></div>
     </div>
   </div>
 </div>
 
+<script src="https://pay.google.com/gp/p/js/pay.js"></script>
+
 {{!-- Adyen Component client code --}}
 <script type="text/javascript" src="../adyenImplementation.js"></script>
+<script type="text/javascript" src="../adyenImplementation-components.js"></script>

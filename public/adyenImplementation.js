@@ -1,5 +1,6 @@
 const clientKey = document.getElementById("clientKey").innerHTML;
 const type = document.getElementById("type").innerHTML;
+const method = document.getElementById("method").innerHTML;
 
 // Used to finalize a checkout call in case of redirect
 const urlParams = new URLSearchParams(window.location.search);
@@ -115,10 +116,12 @@ function handleServerResponse(res, component) {
   }
 }
 
-if (!sessionId) {
-    startCheckout();
-}
-else {
-    // existing session: complete Checkout
-    finalizeCheckout();
+if (!method) {
+    if (!sessionId) {
+        startCheckout();
+    }
+    else {
+        // existing session: complete Checkout
+        finalizeCheckout();
+    }
 }

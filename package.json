@@ -12,6 +12,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@adyen/adyen-web": "^5.16.0",
     "@adyen/api-library": "^10.2.0",
     "ansi-regex": "^6.0.1",
     "dot-prop": ">=5.1.1",
@@ -21,8 +22,8 @@
     "minimist": ">=1.2.2",
     "morgan": "^1.10.0",
     "node-gyp": "^8.0.0",
-    "uuidv4": "^6.1.1",
-    "undefsafe": "~2.0.5"
+    "undefsafe": "~2.0.5",
+    "uuidv4": "^6.1.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.2"
